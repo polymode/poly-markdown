@@ -4,7 +4,7 @@
 ;; Maintainer: Vitalie Spinu
 ;; Copyright (C) 2018
 ;; Version: 0.1
-;; Package-Requires: ((emacs "25") (polymode "0.1") (markdown-mode 2.3))
+;; Package-Requires: ((emacs "25") (polymode "0.1") (markdown-mode "2.3"))
 ;; URL: https://github.com/polymode/poly-markdown
 ;; Keywords: emacs
 ;;
