@@ -36,82 +36,84 @@
 ;;; Code:
 
 (require 'polymode)
-;; (require 'markdown-mode)
+(require 'markdown-mode)
 
 (defcustom pm-host/markdown
-  (pm-host-chunkmode "Markdown"
+  (pm-host-chunkmode :object-name "Markdown"
                      :mode 'markdown-mode
-                     :init-functions '(poly-markdown-remove-markdown-hooks))
-  "Markdown host chunkmode."
-  :group 'hostmodes
+                     :init-functions '(poly-markdown-remove-markdown-hooks)
+                     :protect-syntax nil
+                     :protect-font-lock nil)
+  "Markdown host chunkmode"
+  :group 'poly-host-modes
   :type 'object)
 
-(defcustom  pm-inner/markdown-fenced-code
-  (pm-inner-auto-chunkmode "markdown-fenced-code"
+(defcustom pm-inner/markdown-fenced-code
+  (pm-inner-auto-chunkmode :object-name "markdown-fenced-code"
                            :head-matcher "^[ \t]*```[{ \t]*\\w.*$"
                            :tail-matcher "^[ \t]*```[ \t]*$"
-                           :mode-matcher (cons "```[ \t]*{?\\(?:lang *= *\\)?\\([^ \t\n;=,}]+\\)" 1))
+                           :mode-matcher (cons "```[ \t]*{?\\(?:lang *= *\\)?\\([^ \t\n;=,}]+\\)" 1)
+                           :head-mode 'host
+                           :tail-mode 'host)
   "Markdown fenced code block."
-  :group 'innermodes
+  :group 'poly-inner-modes
   :type 'object)
 
-(defcustom  pm-inner/markdown-inline-code
-  (pm-inner-auto-chunkmode "markdown-inline-code"
+(defcustom pm-inner/markdown-inline-code
+  (pm-inner-auto-chunkmode :object-name "markdown-inline-code"
                            :head-matcher (cons "[^`]\\(`{?[[:alpha:]+-]+\\)[ \t]" 1)
                            :tail-matcher (cons "[^`]\\(`\\)[^`]" 1)
                            :mode-matcher (cons "`[ \t]*{?\\(?:lang *= *\\)?\\([[:alpha:]+-]+\\)" 1)
-                           ;; fixme: markdown breaks badly with this
-                           ;; :head-mode 'host
-                           ;; :tail-mode 'host
-                           )
+                           :head-mode 'host
+                           :tail-mode 'host)
   "Markdown inline code."
-  :group 'innermodes
+  :group 'poly-inner-modes
   :type 'object)
 
-(defcustom  pm-inner/markdown-displayed-math
-  (pm-inner-chunkmode "markdown-displayed-math"
+(defcustom pm-inner/markdown-displayed-math
+  (pm-inner-chunkmode :object-name "markdown-displayed-math"
                       :head-matcher (cons "^[ \t]*\\(\\$\\$\\)." 1)
-                      :tail-matcher (cons "\\(\\$\\$\\)$" 1)
+                      :tail-matcher (cons "[^$]\\(\\$\\$\\)[^$[:alnum:]]" 1)
                       :head-mode 'host
                       :tail-mode 'host
                       :mode 'latex-mode)
   "Displayed math $$..$$ block.
 Tail must be flowed by new line but head not (a space or comment
 character would do)."
-  :group 'innermodes
+  :group 'poly-inner-modes
   :type 'object)
 
-(defcustom  pm-inner/markdown-inline-math
-  (pm-inner-chunkmode "markdown-inline-math"
-                      :head-matcher (cons " \\(\\$\\)[^ $\t[:digit:]]" 1)
-                      :tail-matcher (cons "[^ $\\\t]\\(\\$\\) " 1)
+(defcustom pm-inner/markdown-inline-math
+  (pm-inner-chunkmode :object-name "markdown-inline-math"
+                      :head-matcher (cons "[ \t\n]\\(\\$\\)[^ $\t[:digit:]]" 1)
+                      :tail-matcher (cons "[^ $\\\t]\\(\\$\\)[^$[:alnum:]]" 1)
                       :head-mode 'host
                       :tail-mode 'host
-                      :mode 'latex-mode
-                      :font-lock-narrow t)
+                      :mode 'latex-mode)
   "Displayed math $$..$$ block.
 Tail must be flowed by new line but head not (a space or comment
 character would do)."
-  :group 'innermodes
+  :group 'poly-inner-modes
   :type 'object)
 
 (defcustom pm-poly/markdown
-  (pm-polymode "markdown"
+  (pm-polymode :object-name "markdown"
                :hostmode 'pm-host/markdown
                :innermodes '(pm-inner/markdown-fenced-code
                              pm-inner/markdown-inline-code
                              pm-inner/markdown-displayed-math
                              pm-inner/markdown-inline-math))
-  "Markdown typical configuration."
+  "Markdown typical configuration"
   :group 'polymodes
   :type 'object)
 
 ;;;###autoload  (autoload 'poly-markdown-mode "poly-markdown")
 (define-polymode poly-markdown-mode pm-poly/markdown)
+(add-to-list 'auto-mode-alist '("\\.md$" . poly-markdown-mode))
 
 ;;; FIXES:
 (defun poly-markdown-remove-markdown-hooks ()
-  "Remove markdown hooks which interfere badly with polymode.."
+  ;; get rid of awful hooks
   (remove-hook 'window-configuration-change-hook 'markdown-fontify-buffer-wiki-links t)
   (remove-hook 'after-change-functions 'markdown-check-change-for-wiki-link t))
 
@@ -135,4 +137,3 @@ Restore match data previously stored in PROPERTY."
         saved))))
 
 (provide 'poly-markdown)
-;;; poly-markdown.el ends here
