@@ -39,7 +39,7 @@
 (require 'markdown-mode)
 
 (defcustom pm-host/markdown
-  (pm-host-chunkmode :object-name "Markdown"
+  (pm-host-chunkmode :name "Markdown"
                      :mode 'markdown-mode
                      :init-functions '(poly-markdown-remove-markdown-hooks)
                      :protect-syntax nil
@@ -49,7 +49,7 @@
   :type 'object)
 
 (defcustom pm-inner/markdown-fenced-code
-  (pm-inner-auto-chunkmode :object-name "markdown-fenced-code"
+  (pm-inner-auto-chunkmode :name "markdown-fenced-code"
                            :head-matcher "^[ \t]*```[{ \t]*\\w.*$"
                            :tail-matcher "^[ \t]*```[ \t]*$"
                            :mode-matcher (cons "```[ \t]*{?\\(?:lang *= *\\)?\\([^ \t\n;=,}]+\\)" 1)
@@ -60,7 +60,7 @@
   :type 'object)
 
 (defcustom pm-inner/markdown-inline-code
-  (pm-inner-auto-chunkmode :object-name "markdown-inline-code"
+  (pm-inner-auto-chunkmode :name "markdown-inline-code"
                            :head-matcher (cons "[^`]\\(`{?[[:alpha:]+-]+\\)[ \t]" 1)
                            :tail-matcher (cons "[^`]\\(`\\)[^`]" 1)
                            :mode-matcher (cons "`[ \t]*{?\\(?:lang *= *\\)?\\([[:alpha:]+-]+\\)" 1)
@@ -71,7 +71,7 @@
   :type 'object)
 
 (defcustom pm-inner/markdown-displayed-math
-  (pm-inner-chunkmode :object-name "markdown-displayed-math"
+  (pm-inner-chunkmode :name "markdown-displayed-math"
                       :head-matcher (cons "^[ \t]*\\(\\$\\$\\)." 1)
                       :tail-matcher (cons "[^$]\\(\\$\\$\\)[^$[:alnum:]]" 1)
                       :head-mode 'host
@@ -84,7 +84,7 @@ character would do)."
   :type 'object)
 
 (defcustom pm-inner/markdown-inline-math
-  (pm-inner-chunkmode :object-name "markdown-inline-math"
+  (pm-inner-chunkmode :name "markdown-inline-math"
                       :head-matcher (cons "[ \t\n]\\(\\$\\)[^ $\t[:digit:]]" 1)
                       :tail-matcher (cons "[^ $\\\t]\\(\\$\\)[^$[:alnum:]]" 1)
                       :head-mode 'host
@@ -97,7 +97,7 @@ character would do)."
   :type 'object)
 
 (defcustom pm-poly/markdown
-  (pm-polymode :object-name "markdown"
+  (pm-polymode :name "markdown"
                :hostmode 'pm-host/markdown
                :innermodes '(pm-inner/markdown-fenced-code
                              pm-inner/markdown-inline-code
