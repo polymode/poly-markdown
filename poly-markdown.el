@@ -45,7 +45,7 @@
                      :protect-syntax nil
                      :protect-font-lock nil)
   "Markdown host chunkmode"
-  :group 'poly-host-modes
+  :group 'poly-hostmodes
   :type 'object)
 
 (defcustom pm-inner/markdown-fenced-code
@@ -56,7 +56,7 @@
                            :head-mode 'host
                            :tail-mode 'host)
   "Markdown fenced code block."
-  :group 'poly-inner-modes
+  :group 'poly-innermodes
   :type 'object)
 
 (defcustom pm-inner/markdown-inline-code
@@ -67,7 +67,7 @@
                            :head-mode 'host
                            :tail-mode 'host)
   "Markdown inline code."
-  :group 'poly-inner-modes
+  :group 'poly-innermodes
   :type 'object)
 
 (defcustom pm-inner/markdown-displayed-math
@@ -80,7 +80,7 @@
   "Displayed math $$..$$ block.
 Tail must be flowed by new line but head not (a space or comment
 character would do)."
-  :group 'poly-inner-modes
+  :group 'poly-innermodes
   :type 'object)
 
 (defcustom pm-inner/markdown-inline-math
@@ -93,7 +93,7 @@ character would do)."
   "Displayed math $$..$$ block.
 Tail must be flowed by new line but head not (a space or comment
 character would do)."
-  :group 'poly-inner-modes
+  :group 'poly-innermodes
   :type 'object)
 
 (defcustom pm-poly/markdown
@@ -114,28 +114,9 @@ character would do)."
 (add-to-list 'auto-mode-alist '("\\.md$" . poly-markdown-mode))
 
 ;;; FIXES:
-(defun poly-markdown-remove-markdown-hooks ()
-  ;; get rid of awful hooks
+(defun poly-markdown-remove-markdown-hooks (_)
+  ;; get rid of aggressive hooks (VS[02-09-2018]: probably no longer necessary)
   (remove-hook 'window-configuration-change-hook 'markdown-fontify-buffer-wiki-links t)
   (remove-hook 'after-change-functions 'markdown-check-change-for-wiki-link t))
-
-(with-eval-after-load "markdown-mode"
-;;; https://github.com/jrblevin/markdown-mode/pull/356
-  (defun markdown-match-propertized-text (property last)
-    "Match text with PROPERTY from point to LAST.
-Restore match data previously stored in PROPERTY."
-    (let ((saved (get-text-property (point) property))
-          pos)
-      (unless saved
-        (setq pos (next-single-property-change (point) property nil last))
-        (unless (= pos last)
-          (setq saved (get-text-property pos property))))
-      (when saved
-        (set-match-data saved)
-        ;; Step at least one character beyond point. Otherwise
-        ;; `font-lock-fontify-keywords-region' infloops.
-        (goto-char (min (1+ (max (match-end 0) (point)))
-                        (point-max)))
-        saved))))
 
 (provide 'poly-markdown)

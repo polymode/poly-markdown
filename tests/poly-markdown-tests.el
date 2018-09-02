@@ -2,6 +2,9 @@
 (require 'markdown-mode)
 (require 'poly-markdown)
 (require 'polymode-test)
+;; ada mode auto loading breaks without this
+(require 'speedbar)
+
 
 ;; fixme: add tests when after change spans wrongly temporally cover other spans
 
