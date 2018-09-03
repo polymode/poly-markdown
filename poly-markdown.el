@@ -119,4 +119,20 @@ character would do)."
   (remove-hook 'window-configuration-change-hook 'markdown-fontify-buffer-wiki-links t)
   (remove-hook 'after-change-functions 'markdown-check-change-for-wiki-link t))
 
+;; temporary fix #168  https://github.com/jrblevin/markdown-mode/pull/360
+(defun markdown-code-block-at-pos (pos)
+  "Return match data list if there is a code block at POS.
+Uses text properties at the beginning of the line position.
+This includes pre blocks, tilde-fenced code blocks, and GFM
+quoted code blocks.  Return nil otherwise."
+  (let ((bol (save-excursion (goto-char pos) (point-at-bol))))
+    (or (get-text-property bol 'markdown-pre)
+        (let* ((bounds (markdown-get-enclosing-fenced-block-construct pos))
+               (second (cl-second bounds)))
+          (if second
+              ;; chunks are right open
+              (when (< pos second)
+                bounds)
+            bounds)))))
+
 (provide 'poly-markdown)
