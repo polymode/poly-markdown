@@ -50,7 +50,7 @@
 
 (defcustom pm-inner/markdown-fenced-code
   (pm-inner-auto-chunkmode :name "markdown-fenced-code"
-                           :head-matcher "^[ \t]*```[{ \t]*\\w.*$"
+                           :head-matcher "^[ \t]*```[{ \t]*\\w.*\n"
                            :tail-matcher "^[ \t]*```[ \t]*$"
                            :mode-matcher (cons "```[ \t]*{?\\(?:lang *= *\\)?\\([^ \t\n;=,}]+\\)" 1)
                            :head-mode 'host
