@@ -48,6 +48,17 @@
   :group 'poly-hostmodes
   :type 'object)
 
+(defcustom pm-inner/markdown-yaml-metadata
+  (pm-inner-chunkmode :name "markdown-yaml-metadata"
+                      :mode 'yaml-mode
+                      :head-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-begin)
+                      :tail-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-end)
+                      :head-mode 'host
+                      :tail-mode 'host)
+  "Markdown YAML metadata block."
+  :group 'poly-innermodes
+  :type 'object)
+
 (defcustom pm-inner/markdown-fenced-code
   (pm-inner-auto-chunkmode :name "markdown-fenced-code"
                            :head-matcher "^[ \t]*```[{ \t]*\\w.*\n"
@@ -102,7 +113,8 @@ character would do)."
                :innermodes '(pm-inner/markdown-fenced-code
                              pm-inner/markdown-inline-code
                              pm-inner/markdown-displayed-math
-                             pm-inner/markdown-inline-math))
+                             pm-inner/markdown-inline-math
+                             pm-inner/markdown-yaml-metadata))
   "Markdown typical configuration"
   :group 'polymodes
   :type 'object)

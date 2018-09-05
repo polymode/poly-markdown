@@ -227,6 +227,18 @@ $$E=mc^2$$ )
     (pm-switch-to-buffer)
     (should (eq major-mode 'pascal-mode))))
 
+(ert-deftest poly-markdown/yaml-block ()
+  (pm-test-run-on-file poly-markdown-mode "markdown-with-yaml.md"
+    (goto-char (point-min))
+    (pm-switch-to-buffer)
+    (should (eq major-mode 'markdown-mode))
+    (forward-line 1)
+    (pm-switch-to-buffer)
+    (should (eq major-mode 'yaml-mode))
+    (forward-line 2)
+    (pm-switch-to-buffer)
+    (should (eq major-mode 'markdown-mode))))
+
 ;; this test is useless actually; #163 shows only when `kill-buffer` is called
 ;; interactively and is not picked up by this test
 (ert-deftest poly/markdown/kill-buffer ()
@@ -237,3 +249,4 @@ $$E=mc^2$$ )
       (let (kill-buffer-query-functions)
         (kill-buffer))
       (should-not (buffer-live-p base-buff)))))
+
