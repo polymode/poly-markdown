@@ -132,7 +132,7 @@ def insertion_sort_bin(seq):
                 low = middle + 1             
             else:
                 up = middle
-        # insert key at position ``low``
+        # insert key at position ``low`` // no-indent-test
         seq[:] = seq[:low] + [key] + seq[low:i] + seq[i + 1:]
 ```
 

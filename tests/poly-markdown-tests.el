@@ -23,9 +23,9 @@
 (ert-deftest poly-markdown/spans-at-borders ()
   (pm-test-run-on-file poly-markdown-mode "markdown.md"
     (pm-map-over-spans
-     (lambda ()
-       (let* ((sbeg (nth 1 *span*))
-              (send (nth 2 *span*))
+     (lambda (span)
+       (let* ((sbeg (nth 1 span))
+              (send (nth 2 span))
               (range1 (pm-innermost-range sbeg))
               (range2 (pm-innermost-range send)))
          (should (eq sbeg (car range1)))
@@ -36,8 +36,8 @@
 (ert-deftest poly-markdown/spans-at-narrowed-borders ()
   (pm-test-run-on-file poly-markdown-mode "markdown.md"
     (pm-map-over-spans
-     (lambda ()
-       (pm-with-narrowed-to-span *span*
+     (lambda (span)
+       (pm-with-narrowed-to-span span
          (let* ((range1 (pm-innermost-range (point-min)))
                 (range2 (pm-innermost-range (point-max))))
            (should (eq (car range1) (point-min)))
@@ -241,7 +241,7 @@ $$E=mc^2$$ )
 
 ;; this test is useless actually; #163 shows only when `kill-buffer` is called
 ;; interactively and is not picked up by this test
-(ert-deftest poly/markdown/kill-buffer ()
+(ert-deftest poly-markdown/kill-buffer ()
   (pm-test-run-on-file poly-markdown-mode "markdown.md"
     (let ((base-buff (buffer-base-buffer)))
       (re-search-forward "defmacro")
@@ -250,3 +250,6 @@ $$E=mc^2$$ )
         (kill-buffer))
       (should-not (buffer-live-p base-buff)))))
 
+
+(ert-deftest poly-markdown/indentation ()
+  (pm-test-indentation poly-markdown-mode "markdown.md"))
