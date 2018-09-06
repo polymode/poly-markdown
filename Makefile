@@ -15,7 +15,10 @@ OBJECTS = $(ELS:.el=.elc)
 all: compile checkdoc test
 
 build: version clean
-	$(EMACSBATCH) --funcall batch-byte-compile *.el
+	$(EMACSBATCH) --load targets/melpa.el --funcall batch-byte-compile *.el
+
+build-local: version clean
+	$(EMACSBATCH) --load targets/local.el --funcall batch-byte-compile *.el
 
 checkdoc: version
 	$(EMACSBATCH) --load targets/checkdoc.el
@@ -34,9 +37,9 @@ melpa: version
 elpa: melpa
 
 start: version
-	$(EMACSRUN) -L ~/VC/markdown-mode/ \
-		--load tests/*.el \
-		--file tests/poly-markdown-tests.el 
+	$(EMACSRUN) \
+		--load targets/melpa.el \
+		--file tests/input/markdown.md 
 
 test: version
 	$(EMACSBATCH) --load targets/melpa.el --load targets/test.el
