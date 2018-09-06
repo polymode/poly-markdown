@@ -8,7 +8,8 @@ tmp/
 *exported*
 .tmd
 tmp*
-ELPA
-MELPA
+.ELPA
+.MELPA
 site/
-targets/local*
+*autoloads.el
+targets/local.el
