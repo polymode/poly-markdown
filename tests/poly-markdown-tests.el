@@ -1,7 +1,7 @@
 
 (require 'markdown-mode)
 (require 'poly-markdown)
-(require 'polymode-test)
+(require 'polymode-test-utils)
 ;; ada mode auto loading breaks without this
 (require 'speedbar)
 
