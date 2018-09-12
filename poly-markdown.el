@@ -41,9 +41,7 @@
 (defcustom pm-host/markdown
   (pm-host-chunkmode :name "Markdown"
                      :mode 'markdown-mode
-                     :init-functions '(poly-markdown-remove-markdown-hooks)
-                     :protect-syntax nil
-                     :protect-font-lock nil)
+                     :init-functions '(poly-markdown-remove-markdown-hooks))
   "Markdown host chunkmode"
   :group 'poly-hostmodes
   :type 'object)
