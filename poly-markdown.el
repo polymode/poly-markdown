@@ -79,10 +79,25 @@
   :group 'poly-innermodes
   :type 'object)
 
+(defun poly-markdown-displayed-math-head-matcher (count)
+  (when (re-search-forward "\\\\\\[\\|^[ \t]*\\(\\$\\$\\)." nil t count)
+    (if (match-beginning 1)
+        (cons (match-beginning 1) (match-end 1))
+      (cons (match-beginning 0) (match-end 0)))))
+
+(defun poly-markdown-displayed-math-tail-matcher (_count)
+  (if (match-beginning 1)
+      ;; head matched an $$..$$ block
+      (when (re-search-forward "[^$]\\(\\$\\$\\)[^$[:alnum:]]" nil t)
+        (cons (match-beginning 1) (match-end 1)))
+    ;; head matched an \[..\] block
+    (when (re-search-forward "\\\\\\]" nil t)
+      (cons (match-beginning 0) (match-end 0)))))
+
 (defcustom pm-inner/markdown-displayed-math
   (pm-inner-chunkmode :name "markdown-displayed-math"
-                      :head-matcher (cons "^[ \t]*\\(\\$\\$\\)." 1)
-                      :tail-matcher (cons "[^$]\\(\\$\\$\\)[^$[:alnum:]]" 1)
+                      :head-matcher #'poly-markdown-displayed-math-head-matcher
+                      :tail-matcher #'poly-markdown-displayed-math-tail-matcher
                       :head-mode 'host
                       :tail-mode 'host
                       :mode 'latex-mode)
@@ -92,10 +107,25 @@ character would do)."
   :group 'poly-innermodes
   :type 'object)
 
+(defun poly-markdown-inline-math-head-matcher (count)
+  (when (re-search-forward "\\\\(\\|[ \t\n]\\(\\$\\)[^ $\t[:digit:]]" nil t count)
+    (if (match-beginning 1)
+        (cons (match-beginning 1) (match-end 1))
+      (cons (match-beginning 0) (match-end 0)))))
+
+(defun poly-markdown-inline-math-tail-matcher (_count)
+  (if (match-beginning 1)
+      ;; head matched an $..$ block
+      (when (re-search-forward "[^ $\\\t]\\(\\$\\)[^$[:alnum:]]" nil t)
+        (cons (match-beginning 1) (match-end 1)))
+    ;; head matched an \(..\) block
+    (when (re-search-forward "\\\\)" nil t)
+      (cons (match-beginning 0) (match-end 0)))))
+
 (defcustom pm-inner/markdown-inline-math
   (pm-inner-chunkmode :name "markdown-inline-math"
-                      :head-matcher (cons "[ \t\n]\\(\\$\\)[^ $\t[:digit:]]" 1)
-                      :tail-matcher (cons "[^ $\\\t]\\(\\$\\)[^$[:alnum:]]" 1)
+                      :head-matcher #'poly-markdown-inline-math-head-matcher
+                      :tail-matcher #'poly-markdown-inline-math-tail-matcher
                       :head-mode 'host
                       :tail-mode 'host
                       :mode 'latex-mode)
