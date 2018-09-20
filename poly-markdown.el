@@ -99,9 +99,11 @@ character would do)."
                       :head-mode 'host
                       :tail-mode 'host
                       :mode 'latex-mode)
-  "Displayed math $$..$$ block.
-Tail must be flowed by new line but head not (a space or comment
-character would do)."
+  "Inline math $..$ block.
+First $ must be preceded by a white-space character and followed
+by a non-whitespace/digit character. The closing $ must be
+preceded by a non-whitespace and not followed by an alphanumeric
+character."
   :group 'poly-innermodes
   :type 'object)
 
