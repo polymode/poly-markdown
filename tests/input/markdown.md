@@ -166,12 +166,12 @@ one is kept."
 
 ```
 
-The end.
+Indentation of modes with simple `indent-line-function` like `indent-relative`
 
-
-Some text with $\\text{inner math}$, formulas $E=mc^2$
-\(#=mc^2\), $E=mc^2$, and more formulas \(E=mc^2\)
-
-```pascal
-Some none-sense (formula $E=mc^2$)
+```sql
+SELECT * FROM table;
+SELECT * FROM table;
+SELECT * FROM table;
 ```
+
+The end.
