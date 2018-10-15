@@ -12,4 +12,3 @@ tmp*
 .MELPA
 site/
 *autoloads.el
-targets/local.el
