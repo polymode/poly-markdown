@@ -272,6 +272,16 @@ $$E=mc^2$$ )
     (pm-switch-to-buffer)
     (should (eq major-mode 'pascal-mode))))
 
+(ert-deftest poly-markdown/inline-code-in-host-mode ()
+  (pm-test-run-on-string 'poly-markdown-mode
+    "aaa `non-mode bbb` cccc"
+    (switch-to-buffer (current-buffer))
+    (goto-char 14)
+    (pm-switch-to-buffer)
+    (should (eq major-mode 'markdown-mode))
+    (should (eq (car (get-text-property (point) 'face))
+                'markdown-inline-code-face))))
+
 (ert-deftest poly-markdown/displayed-math-both ()
   (pm-test-run-on-string 'poly-markdown-mode
     "Some text with
