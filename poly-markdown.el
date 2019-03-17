@@ -38,46 +38,38 @@
 (require 'polymode)
 (require 'markdown-mode)
 
-(defcustom pm-host/markdown
-  (pm-host-chunkmode :name "Markdown"
-                     :mode 'markdown-mode
-                     :init-functions '(poly-markdown-remove-markdown-hooks))
-  "Markdown host chunkmode"
-  :group 'poly-hostmodes
-  :type 'object)
+(define-obsolete-variable-alias 'pm-host/markdown 'poly-markdown-hostmode "v0.2")
+(define-obsolete-variable-alias 'pm-inner/markdown-yaml-metadata 'poly-markdown-yaml-metadata-innermode "v0.2")
+(define-obsolete-variable-alias 'pm-inner/markdown-fenced-code 'poly-markdown-fenced-code-innermode "v0.2")
+(define-obsolete-variable-alias 'pm-inner/markdown-inline-code 'poly-markdown-inline-code-innermode "v0.2")
+(define-obsolete-variable-alias 'pm-inner/markdown-displayed-math 'poly-markdown-displayed-math-innermode "v0.2")
+(define-obsolete-variable-alias 'pm-inner/markdown-inline-math 'poly-markdown-inline-math-innermode "v0.2")
+(define-obsolete-variable-alias 'pm-poly/markdown 'poly-markdown-polymode "v0.2")
 
-(defcustom pm-inner/markdown-yaml-metadata
-  (pm-inner-chunkmode :name "markdown-yaml-metadata"
-                      :mode 'yaml-mode
-                      :head-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-begin)
-                      :tail-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-end)
-                      :head-mode 'host
-                      :tail-mode 'host)
-  "Markdown YAML metadata block."
-  :group 'poly-innermodes
-  :type 'object)
+(define-hostmode poly-markdown-hostmode
+  :mode 'markdown-mode
+  :init-functions '(poly-markdown-remove-markdown-hooks))
 
-(defcustom pm-inner/markdown-fenced-code
-  (pm-inner-auto-chunkmode :name "markdown-fenced-code"
-                           :head-matcher (cons "^[ \t]*\\(```{?[[:alpha:]].*\n\\)" 1)
-                           :tail-matcher (cons "^[ \t]*\\(```\\)[ \t]*$" 1)
-                           :mode-matcher (cons "```[ \t]*{?\\(?:lang *= *\\)?\\([^ \t\n;=,}]+\\)" 1)
-                           :head-mode 'host
-                           :tail-mode 'host)
-  "Markdown fenced code block."
-  :group 'poly-innermodes
-  :type 'object)
+(define-innermode poly-markdown-yaml-metadata-innermode
+  :mode 'yaml-mode
+  :head-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-begin)
+  :tail-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-end)
+  :head-mode 'host
+  :tail-mode 'host)
 
-(defcustom pm-inner/markdown-inline-code
-  (pm-inner-auto-chunkmode :name "markdown-inline-code"
-                           :head-matcher (cons "[^`]\\(`{?[[:alpha:]+-]+\\)[ \t]" 1)
-                           :tail-matcher (cons "[^`]\\(`\\)[^`]" 1)
-                           :mode-matcher (cons "`[ \t]*{?\\(?:lang *= *\\)?\\([[:alpha:]+-]+\\)" 1)
-                           :head-mode 'host
-                           :tail-mode 'host)
-  "Markdown inline code."
-  :group 'poly-innermodes
-  :type 'object)
+(define-auto-innermode poly-markdown-fenced-code-innermode
+  :head-matcher (cons "^[ \t]*\\(```{?[[:alpha:]].*\n\\)" 1)
+  :tail-matcher (cons "^[ \t]*\\(```\\)[ \t]*$" 1)
+  :mode-matcher (cons "```[ \t]*{?\\(?:lang *= *\\)?\\([^ \t\n;=,}]+\\)" 1)
+  :head-mode 'host
+  :tail-mode 'host)
+
+(define-auto-innermode poly-markdown-inline-code-innermode
+  :head-matcher (cons "[^`]\\(`{?[[:alpha:]+-]+\\)[ \t]" 1)
+  :tail-matcher (cons "[^`]\\(`\\)[^`]" 1)
+  :mode-matcher (cons "`[ \t]*{?\\(?:lang *= *\\)?\\([[:alpha:]+-]+\\)" 1)
+  :head-mode 'host
+  :tail-mode 'host)
 
 (defun poly-markdown-displayed-math-head-matcher (count)
   (when (re-search-forward "\\\\\\[\\|^[ \t]*\\(\\$\\$\\)." nil t count)
@@ -94,18 +86,15 @@
     (when (re-search-forward "\\\\\\]" nil t)
       (cons (match-beginning 0) (match-end 0)))))
 
-(defcustom pm-inner/markdown-displayed-math
-  (pm-inner-chunkmode :name "markdown-displayed-math"
-                      :head-matcher #'poly-markdown-displayed-math-head-matcher
-                      :tail-matcher #'poly-markdown-displayed-math-tail-matcher
-                      :head-mode 'host
-                      :tail-mode 'host
-                      :mode 'latex-mode)
-  "Displayed math $$..$$ block.
-Tail must be flowed by new line but head not (a space or comment
-character would do)."
-  :group 'poly-innermodes
-  :type 'object)
+(define-innermode poly-markdown-displayed-math-innermode nil
+  "Displayed math $$..$$ innermode.
+Tail must be flowed by a new line but head need not (a space or
+comment character would do)."
+  :head-matcher #'poly-markdown-displayed-math-head-matcher
+  :tail-matcher #'poly-markdown-displayed-math-tail-matcher
+  :head-mode 'host
+  :tail-mode 'host
+  :mode 'latex-mode)
 
 (defun poly-markdown-inline-math-head-matcher (count)
   (when (re-search-forward "\\\\(\\|[ \t\n]\\(\\$\\)[^ $\t[:digit:]]" nil t count)
@@ -122,38 +111,29 @@ character would do)."
     (when (re-search-forward "\\\\)" nil t)
       (cons (match-beginning 0) (match-end 0)))))
 
-(defcustom pm-inner/markdown-inline-math
-  (pm-inner-chunkmode :name "markdown-inline-math"
-                      :head-matcher #'poly-markdown-inline-math-head-matcher
-                      :tail-matcher #'poly-markdown-inline-math-tail-matcher
-                      :head-mode 'host
-                      :tail-mode 'host
-                      :mode 'latex-mode)
+(define-innermode poly-markdown-inline-math-innermode nil
   "Inline math $..$ block.
 First $ must be preceded by a white-space character and followed
 by a non-whitespace/digit character. The closing $ must be
 preceded by a non-whitespace and not followed by an alphanumeric
 character."
-  :group 'poly-innermodes
-  :type 'object)
-
-(defcustom pm-poly/markdown
-  (pm-polymode :name "markdown"
-               :hostmode 'pm-host/markdown
-               :innermodes '(pm-inner/markdown-fenced-code
-                             pm-inner/markdown-inline-code
-                             pm-inner/markdown-displayed-math
-                             pm-inner/markdown-inline-math
-                             pm-inner/markdown-yaml-metadata))
-  "Markdown typical configuration"
-  :group 'polymodes
-  :type 'object)
+  :head-matcher #'poly-markdown-inline-math-head-matcher
+  :tail-matcher #'poly-markdown-inline-math-tail-matcher
+  :head-mode 'host
+  :tail-mode 'host
+  :mode 'latex-mode)
 
 ;;;###autoload  (autoload 'poly-markdown-mode "poly-markdown")
-(define-polymode poly-markdown-mode pm-poly/markdown)
+(define-polymode poly-markdown-mode
+  :hostmode 'poly-markdown-hostmode
+  :innermodes '(poly-markdown-fenced-code-innermode
+                poly-markdown-inline-code-innermode
+                poly-markdown-displayed-math-innermode
+                poly-markdown-inline-math-innermode
+                poly-markdown-yaml-metadata-innermode))
 
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.md$" . poly-markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . poly-markdown-mode))
 
 ;;; FIXES:
 (defun poly-markdown-remove-markdown-hooks (_)
