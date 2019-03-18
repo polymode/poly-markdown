@@ -121,6 +121,10 @@
 (ert-deftest poly-markdown/fenced-code ()
   (poly-markdown-tests-set-protected nil)
   (pm-test-poly-lock poly-markdown-mode "markdown.md"
+    ((delete-fence (38))
+     (delete-forward-char 1)
+     (pm-test-spans)
+     (insert "`"))
     ((delete-fortran-print (23))
      (forward-word)
      (delete-backward-char 1))
