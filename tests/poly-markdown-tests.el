@@ -95,27 +95,27 @@
     (pm-test-poly-lock poly-markdown-mode "markdown.md"
       ((insert-1 ("^## Intro" beg))
        (insert " ")
-       (pm-test-spans)
+       (pm-test-faces)
        (delete-backward-char 1))
       ((delete-2 "^2. Blockquotes")
-       (pm-test-spans)
+       (pm-test-faces)
        (backward-kill-word 1))
       ((insert-new-line-3 ("^3. Two Inline" end))
        (insert "\n")
-       (pm-test-spans)
+       (pm-test-faces)
        (delete-backward-char 1))))
   (ert-deftest poly-markdown/headings-protected ()
     (poly-markdown-tests-set-protected t)
     (pm-test-poly-lock poly-markdown-mode "markdown.md"
       ((insert-1 ("^## Intro" beg))
        (insert " ")
-       (pm-test-spans)
+       (pm-test-faces)
        (delete-backward-char 1))
       ((delete-2 "^2. Blockquotes")
        (backward-kill-word 1))
       ((insert-new-line-3 ("^3. Two Inline" end))
        (insert "\n")
-       (pm-test-spans)
+       (pm-test-faces)
        (delete-backward-char 1)))))
 
 (ert-deftest poly-markdown/fenced-code ()
@@ -123,7 +123,7 @@
   (pm-test-poly-lock poly-markdown-mode "markdown.md"
     ((delete-fence (38))
      (delete-forward-char 1)
-     (pm-test-spans)
+     (pm-test-faces)
      (insert "`"))
     ((delete-fortran-print (23))
      (forward-word)
@@ -167,7 +167,7 @@ $E=mc^2$, and more formulas $E=mc^2$;
 ```pascal
 Some none-sense (formula $E=mc^2$)
 ```"
-    (switch-to-buffer (current-buffer))
+    ;; (switch-to-buffer (current-buffer))
     (goto-char 17)
     (pm-switch-to-buffer)
     (should (eq major-mode 'latex-mode))
@@ -201,7 +201,7 @@ Some none-sense (formula $E=mc^2$)
 ```pascal
 Some none-sense (formula $E=mc^2$ \\(dddd\\))
 ```"
-    (switch-to-buffer (current-buffer))
+    ;; (switch-to-buffer (current-buffer))
     (goto-char 17)
     (pm-switch-to-buffer)
     (should (eq major-mode 'latex-mode))
@@ -247,7 +247,7 @@ $$E=mc^2$$, and $343 more $$$ formulas $$$ and $3
 Some none-sense (formula
 $$E=mc^2$$ )
 ```"
-    (switch-to-buffer (current-buffer))
+    ;; (switch-to-buffer (current-buffer))
     (goto-char 18)
     (pm-switch-to-buffer)
     (should (eq major-mode 'latex-mode))
@@ -279,7 +279,7 @@ $$E=mc^2$$ )
 (ert-deftest poly-markdown/inline-code-in-host-mode ()
   (pm-test-run-on-string 'poly-markdown-mode
     "aaa `non-mode bbb` cccc"
-    (switch-to-buffer (current-buffer))
+    ;; (switch-to-buffer (current-buffer))
     (goto-char 14)
     (pm-switch-to-buffer)
     (should (eq major-mode 'markdown-mode))
@@ -298,7 +298,7 @@ $$E=mc^2$$, and $343 more $$$ formulas $$$ and $3
 Some none-sense (formula
 \\[E=mc^2\\] )
 ```"
-    (switch-to-buffer (current-buffer))
+    ;; (switch-to-buffer (current-buffer))
     (goto-char 18)
     (pm-switch-to-buffer)
     (should (eq major-mode 'latex-mode))
@@ -342,6 +342,81 @@ Some none-sense (formula
     (pm-switch-to-buffer)
     (should (eq major-mode 'pascal-mode))))
 
+(ert-deftest poly-markdown/nested-$-body ()
+  "Test for #6"
+  (oset poly-markdown-inline-math-innermode :allow-nested t)
+  (pm-test-spans 'poly-markdown-mode
+    "```python
+ $
+python-mode-here
+```
+")
+  (pm-test-run-on-string 'poly-markdown-mode
+    "```python
+ $
+python-mode-here
+```
+"
+    (switch-to-buffer (current-buffer))
+    (goto-char 14)
+    (pm-switch-to-buffer)
+    (should (eq major-mode 'python-mode))
+    (should (equal (pm-innermost-range 31 'no-cache)
+                   (cons 31 34))))
+  (oset poly-markdown-inline-math-innermode :allow-nested nil))
+
+(ert-deftest poly-markdown/nested-$-head ()
+  "Test for #6"
+  (oset poly-markdown-inline-math-innermode :allow-nested t)
+  (pm-test-spans 'poly-markdown-mode
+    "```{python $ }
+python-mode-here
+```
+")
+  (pm-test-run-on-string 'poly-markdown-mode
+    "```{python $ }
+python-mode-here
+```
+"
+    (switch-to-buffer (current-buffer))
+    (goto-char 16)
+    (pm-switch-to-buffer)
+    (should (eq major-mode 'python-mode))
+    (should (equal (pm-innermost-range 16 'no-cache)
+                   (cons 16 33))))
+  (oset poly-markdown-inline-math-innermode :allow-nested nil))
+
+(ert-deftest poly-markdown/nested-$-general ()
+  "Test for #6"
+  (pm-test-spans 'poly-markdown-mode
+    "```{python}
+sf $sfsfdsfsfd
+```
+
+```{python test1}
+python-here
+a + 3 $
+python-here
+```
+")
+  (pm-test-run-on-string 'poly-markdown-mode
+    "```{python}
+sf $sfsfdsfsfd
+```
+
+```{python test1}
+python-here
+a + 3 $
+python-here
+```
+"
+    (switch-to-buffer (current-buffer))
+    (pm-switch-to-buffer (goto-char 40))
+    (should (or (eq major-mode 'markdown-mode)
+                (eq major-mode 'poly-head-tail-mode)))
+    (pm-switch-to-buffer (goto-char 71))
+    (should (eq major-mode 'python-mode))))
+
 (ert-deftest poly-markdown/yaml-block ()
   (pm-test-run-on-file poly-markdown-mode "markdown-with-yaml.md"
     (goto-char (point-min))
@@ -354,8 +429,7 @@ Some none-sense (formula
     (pm-switch-to-buffer)
     (should (eq major-mode 'markdown-mode))))
 
-;; this test is useless actually; #163 shows only when `kill-buffer` is called
-;; interactively and is not picked up by this test
+;; useless :( #163 shows only when `kill-buffer` is called interactively
 (ert-deftest poly-markdown/kill-buffer ()
   (pm-test-run-on-file poly-markdown-mode "markdown.md"
     (let ((base-buff (buffer-base-buffer)))
