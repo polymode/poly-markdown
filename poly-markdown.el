@@ -60,10 +60,16 @@
   :head-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-begin)
   :tail-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-end))
 
-(define-auto-innermode poly-markdown-fenced-code-innermode poly-markdown-root-innermode
+(define-auto-innermode poly-markdown-fenced-code-named-innermode poly-markdown-root-innermode
   :head-matcher (cons "^[ \t]*\\(```{?[[:alpha:]].*\n\\)" 1)
   :tail-matcher (cons "^[ \t]*\\(```\\)[ \t]*$" 1)
   :mode-matcher (cons "```[ \t]*{?\\(?:lang *= *\\)?\\([^ \t\n;=,}]+\\)" 1))
+
+(define-innermode poly-markdown-fenced-code-unnamed-innermode
+  :head-matcher (cons "^\n[ \t]*\\(```\n\\)" 1)
+  :tail-matcher (cons "^[ \t]*\\(```\\)[ \t]*$" 1)
+  :head-mode 'host
+  :tail-mode 'host)
 
 (define-auto-innermode poly-markdown-inline-code-innermode poly-markdown-root-innermode
   :head-matcher (cons "[^`]\\(`{?[[:alpha:]+-]+\\)[ \t]" 1)
@@ -124,7 +130,8 @@ character."
 ;;;###autoload  (autoload 'poly-markdown-mode "poly-markdown")
 (define-polymode poly-markdown-mode
   :hostmode 'poly-markdown-hostmode
-  :innermodes '(poly-markdown-fenced-code-innermode
+  :innermodes '(poly-markdown-fenced-code-named-innermode
+                poly-markdown-fenced-code-unnamed-innermode
                 poly-markdown-inline-code-innermode
                 poly-markdown-displayed-math-innermode
                 poly-markdown-inline-math-innermode
