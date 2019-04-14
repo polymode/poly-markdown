@@ -50,27 +50,26 @@
   :mode 'markdown-mode
   :init-functions '(poly-markdown-remove-markdown-hooks))
 
-(define-innermode poly-markdown-yaml-metadata-innermode
+(define-innermode poly-markdown-root-innermode
+  :mode 'host
+  :head-mode 'host
+  :tail-mode 'host)
+
+(define-innermode poly-markdown-yaml-metadata-innermode poly-markdown-root-innermode
   :mode 'yaml-mode
   :head-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-begin)
-  :tail-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-end)
-  :head-mode 'host
-  :tail-mode 'host)
+  :tail-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-end))
 
-(define-auto-innermode poly-markdown-fenced-code-innermode
+(define-auto-innermode poly-markdown-fenced-code-innermode poly-markdown-root-innermode
   :head-matcher (cons "^[ \t]*\\(```{?[[:alpha:]].*\n\\)" 1)
   :tail-matcher (cons "^[ \t]*\\(```\\)[ \t]*$" 1)
-  :mode-matcher (cons "```[ \t]*{?\\(?:lang *= *\\)?\\([^ \t\n;=,}]+\\)" 1)
-  :head-mode 'host
-  :tail-mode 'host)
+  :mode-matcher (cons "```[ \t]*{?\\(?:lang *= *\\)?\\([^ \t\n;=,}]+\\)" 1))
 
-(define-auto-innermode poly-markdown-inline-code-innermode
+(define-auto-innermode poly-markdown-inline-code-innermode poly-markdown-root-innermode
   :head-matcher (cons "[^`]\\(`{?[[:alpha:]+-]+\\)[ \t]" 1)
   :tail-matcher (cons "[^`]\\(`\\)[^`]" 1)
   :mode-matcher (cons "`[ \t]*{?\\(?:lang *= *\\)?\\([[:alpha:]+-]+\\)" 1)
-  :allow-nested nil
-  :head-mode 'host
-  :tail-mode 'host)
+  :allow-nested nil)
 
 (defun poly-markdown-displayed-math-head-matcher (count)
   (when (re-search-forward "\\\\\\[\\|^[ \t]*\\(\\$\\$\\)." nil t count)
@@ -87,16 +86,14 @@
     (when (re-search-forward "\\\\\\]" nil t)
       (cons (match-beginning 0) (match-end 0)))))
 
-(define-innermode poly-markdown-displayed-math-innermode nil
+(define-innermode poly-markdown-displayed-math-innermode poly-markdown-root-innermode
   "Displayed math $$..$$ innermode.
 Tail must be flowed by a new line but head need not (a space or
 comment character would do)."
+  :mode 'latex-mode
   :head-matcher #'poly-markdown-displayed-math-head-matcher
   :tail-matcher #'poly-markdown-displayed-math-tail-matcher
-  :allow-nested nil
-  :head-mode 'host
-  :tail-mode 'host
-  :mode 'latex-mode)
+  :allow-nested nil)
 
 (defun poly-markdown-inline-math-head-matcher (count)
   (when (re-search-forward "\\\\(\\|[ \t\n]\\(\\$\\)[^ $\t[:digit:]]" nil t count)
@@ -113,18 +110,16 @@ comment character would do)."
     (when (re-search-forward "\\\\)" nil t)
       (cons (match-beginning 0) (match-end 0)))))
 
-(define-innermode poly-markdown-inline-math-innermode nil
+(define-innermode poly-markdown-inline-math-innermode poly-markdown-root-innermode
   "Inline math $..$ block.
 First $ must be preceded by a white-space character and followed
 by a non-whitespace/digit character. The closing $ must be
 preceded by a non-whitespace and not followed by an alphanumeric
 character."
+  :mode 'latex-mode
   :head-matcher #'poly-markdown-inline-math-head-matcher
   :tail-matcher #'poly-markdown-inline-math-tail-matcher
-  :allow-nested nil
-  :head-mode 'host
-  :tail-mode 'host
-  :mode 'latex-mode)
+  :allow-nested nil)
 
 ;;;###autoload  (autoload 'poly-markdown-mode "poly-markdown")
 (define-polymode poly-markdown-mode
