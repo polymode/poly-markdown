@@ -51,7 +51,8 @@
   :init-functions '(poly-markdown-remove-markdown-hooks))
 
 (define-innermode poly-markdown-root-innermode
-  :mode 'host
+  :mode nil
+  :fallback-mode 'host
   :head-mode 'host
   :tail-mode 'host)
 
