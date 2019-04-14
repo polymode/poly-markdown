@@ -64,10 +64,9 @@
   :head-mode 'host
   :tail-mode 'host)
 
-(define-auto-innermode poly-markdown-inline-code-innermode
-  :head-matcher (cons "[^`]\\(`{?[[:alpha:]+-]+\\)[ \t]" 1)
-  :tail-matcher (cons "[^`]\\(`\\)[^`]" 1)
-  :mode-matcher (cons "`[ \t]*{?\\(?:lang *= *\\)?\\([[:alpha:]+-]+\\)" 1)
+(define-innermode poly-markdown-inline-code-innermode
+  :head-matcher (cons "[^`]\\(`\\)[[:alnum:]+-]" 1)
+  :tail-matcher (cons "\\(`\\)[^`]" 1)
   :allow-nested nil
   :head-mode 'host
   :tail-mode 'host)
