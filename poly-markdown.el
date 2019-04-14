@@ -62,8 +62,8 @@
   :tail-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-end))
 
 (define-auto-innermode poly-markdown-fenced-code-innermode poly-markdown-root-innermode
-  :head-matcher (cons "^[ \t]*\\(```{?[[:alpha:]].*\n\\)" 1)
-  :tail-matcher (cons "^[ \t]*\\(```\\)[ \t]*$" 1)
+  :head-matcher (pm-make-text-property-matcher 'markdown-gfm-block-begin :inc-end)
+  :tail-matcher (pm-make-text-property-matcher 'markdown-gfm-block-end)
   :mode-matcher (cons "```[ \t]*{?\\(?:lang *= *\\)?\\([^ \t\n;=,}]+\\)" 1))
 
 (define-auto-innermode poly-markdown-inline-code-innermode poly-markdown-root-innermode
