@@ -58,7 +58,7 @@
 
 (define-innermode poly-markdown-yaml-metadata-innermode poly-markdown-root-innermode
   :mode 'yaml-mode
-  :head-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-begin)
+  :head-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-begin :inc-end)
   :tail-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-end))
 
 (define-auto-innermode poly-markdown-fenced-code-innermode poly-markdown-root-innermode
