@@ -66,10 +66,15 @@
   :tail-matcher (cons "^[ \t]*\\(```\\)[ \t]*$" 1)
   :mode-matcher (cons "```[ \t]*{?\\(?:lang *= *\\)?\\([^ \t\n;=,}]+\\)" 1))
 
-(define-auto-innermode poly-markdown-inline-code-innermode poly-markdown-root-innermode
-  :head-matcher (cons "[^`]\\(`{?[[:alpha:]+-]+\\)[ \t]" 1)
+;; Intended to be inherited from by more specialized innermodes.
+;; FIXME: Some font-lock issues on deletion.
+;; TOTHINK: Can be added to the default configuration for the sake of the
+;; default fallback, but it's problematic given that inline code blocks often
+;; have arbitrary non-code or language specific content.
+(define-innermode poly-markdown-inline-code-innermode poly-markdown-root-innermode
+  :head-matcher (cons "[^`]\\(`\\)[[:alpha:]+-&({*[]" 1)
   :tail-matcher (cons "[^`]\\(`\\)[^`]" 1)
-  :mode-matcher (cons "`[ \t]*{?\\(?:lang *= *\\)?\\([[:alpha:]+-]+\\)" 1)
+  ;; :mode-matcher (cons "`[ \t]*{?\\(?:lang *= *\\)?\\([[:alpha:]+-]+\\)" 1)
   :allow-nested nil)
 
 (defun poly-markdown-displayed-math-head-matcher (count)
@@ -126,7 +131,7 @@ character."
 (define-polymode poly-markdown-mode
   :hostmode 'poly-markdown-hostmode
   :innermodes '(poly-markdown-fenced-code-innermode
-                poly-markdown-inline-code-innermode
+                ;; poly-markdown-inline-code-innermode
                 poly-markdown-displayed-math-innermode
                 poly-markdown-inline-math-innermode
                 poly-markdown-yaml-metadata-innermode))

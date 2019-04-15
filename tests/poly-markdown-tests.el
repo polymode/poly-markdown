@@ -56,7 +56,9 @@
     (narrow-to-region 60 500)
     (let ((span (pm-innermost-span (point-min))))
       (should (= (nth 1 span) 60))
-      (should (= (nth 2 span) 223)))))
+      ;; 223 should be when inline-innermode is in
+      ;; (should (= (nth 2 span) 223))
+      (should (= (nth 2 span) 380)))))
 
 (ert-deftest poly-markdown/spans-at-point-max ()
   (pm-test-run-on-file poly-markdown-mode "markdown.md"
@@ -122,7 +124,9 @@
   (poly-markdown-tests-set-protected nil)
   (pm-test-poly-lock poly-markdown-mode "markdown.md"
     ((delete-fence (38))
+     ;; (switch-to-buffer (current-buffer))
      (delete-forward-char 1)
+     ;; (polymode-syntax-propertize (point-min) (point-max))
      (pm-test-faces)
      (insert "`"))
     ((delete-fortran-print (23))
