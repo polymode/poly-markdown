@@ -1,4 +1,3 @@
-
 (require 'markdown-mode)
 (require 'poly-markdown)
 (require 'polymode-test-utils)
@@ -445,3 +444,40 @@ python-here
 
 (ert-deftest poly-markdown/indentation ()
   (pm-test-indentation poly-markdown-mode "markdown.md"))
+
+(ert-deftest infra/poly-markdown/clone-indirect-buffer ()
+  (pm-test-run-on-file poly-markdown-mode "markdown.md"
+
+    ;; preserve ib in the host mode
+    (let ((bname "cloned-buffer")
+          (cbuff (current-buffer))
+          (inhibit-message t))
+      (goto-char 1)
+      (clone-indirect-buffer bname t)
+      (switch-to-buffer bname)
+      (should (equal bname (buffer-name)))
+      (should (eq 'markdown-mode major-mode))
+      (goto-line 22) ;; fortran location
+      (should (eq 'markdown-mode major-mode))
+      (pm-switch-to-buffer)
+      (should (eq 'markdown-mode major-mode))
+      (should (equal bname (buffer-name)))
+      (kill-buffer)
+      (should (buffer-live-p cbuff))
+      (switch-to-buffer cbuff))
+
+    ;; also host from the innermode
+    (let ((bname "cloned-buffer")
+          (cbuff (current-buffer))
+          (inhibit-message t))
+      (goto-line 22)
+      (pm-switch-to-buffer)
+      (clone-indirect-buffer bname t)
+      (switch-to-buffer bname)
+      (should (equal bname (buffer-name)))
+      (should (eq 'markdown-mode major-mode))
+      (pm-switch-to-buffer)
+      (should (eq 'markdown-mode major-mode))
+      (should (equal bname (buffer-name)))
+      (kill-buffer)
+      (should (buffer-live-p cbuff)))))
