@@ -62,7 +62,7 @@
   :tail-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-end))
 
 (define-auto-innermode poly-markdown-fenced-code-innermode poly-markdown-root-innermode
-  :head-matcher (cons "^[ \t]*\\(```{?[[:alpha:]].*\n\\)" 1)
+  :head-matcher (cons "^[ \t]*\\(```[ \t]*{?[[:alpha:]].*\n\\)" 1)
   :tail-matcher (cons "^[ \t]*\\(```\\)[ \t]*$" 1)
   :mode-matcher (cons "```[ \t]*{?\\(?:lang *= *\\)?\\([^ \t\n;=,}]+\\)" 1))
 
@@ -144,5 +144,13 @@ character."
   ;; get rid of aggressive hooks (VS[02-09-2018]: probably no longer necessary)
   (remove-hook 'window-configuration-change-hook 'markdown-fontify-buffer-wiki-links t)
   (remove-hook 'after-change-functions 'markdown-check-change-for-wiki-link t))
+
+;;; Polymode for GitHub Flavored Markdown
+(define-hostmode poly-gfm-hostmode poly-markdown-hostmode
+  :mode 'gfm-mode)
+
+;;;###autoload  (autoload 'poly-gfm-mode "poly-markdown")
+(define-polymode poly-gfm-mode poly-markdown-mode
+  :hostmode 'poly-gfm-hostmode)
 
 (provide 'poly-markdown)
