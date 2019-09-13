@@ -38,6 +38,9 @@
 (require 'polymode)
 (require 'markdown-mode)
 
+;; Declarations
+(defvar markdown-enable-math)
+
 (define-obsolete-variable-alias 'pm-host/markdown 'poly-markdown-hostmode "v0.2")
 (define-obsolete-variable-alias 'pm-inner/markdown-yaml-metadata 'poly-markdown-yaml-metadata-innermode "v0.2")
 (define-obsolete-variable-alias 'pm-inner/markdown-fenced-code 'poly-markdown-fenced-code-innermode "v0.2")
@@ -78,19 +81,21 @@
   :allow-nested nil)
 
 (defun poly-markdown-displayed-math-head-matcher (count)
-  (when (re-search-forward "\\\\\\[\\|^[ \t]*\\(\\$\\$\\)." nil t count)
-    (if (match-beginning 1)
-        (cons (match-beginning 1) (match-end 1))
-      (cons (match-beginning 0) (match-end 0)))))
+  (when markdown-enable-math
+    (when (re-search-forward "\\\\\\[\\|^[ \t]*\\(\\$\\$\\)." nil t count)
+      (if (match-beginning 1)
+          (cons (match-beginning 1) (match-end 1))
+        (cons (match-beginning 0) (match-end 0))))))
 
 (defun poly-markdown-displayed-math-tail-matcher (_count)
-  (if (match-beginning 1)
-      ;; head matched an $$..$$ block
-      (when (re-search-forward "[^$]\\(\\$\\$\\)[^$[:alnum:]]" nil t)
-        (cons (match-beginning 1) (match-end 1)))
-    ;; head matched an \[..\] block
-    (when (re-search-forward "\\\\\\]" nil t)
-      (cons (match-beginning 0) (match-end 0)))))
+  (when markdown-enable-math
+    (if (match-beginning 1)
+        ;; head matched an $$..$$ block
+        (when (re-search-forward "[^$]\\(\\$\\$\\)[^$[:alnum:]]" nil t)
+          (cons (match-beginning 1) (match-end 1)))
+      ;; head matched an \[..\] block
+      (when (re-search-forward "\\\\\\]" nil t)
+        (cons (match-beginning 0) (match-end 0))))))
 
 (define-innermode poly-markdown-displayed-math-innermode poly-markdown-root-innermode
   "Displayed math $$..$$ innermode.
@@ -102,19 +107,21 @@ comment character would do)."
   :allow-nested nil)
 
 (defun poly-markdown-inline-math-head-matcher (count)
-  (when (re-search-forward "\\\\(\\|[ \t\n]\\(\\$\\)[^ $\t[:digit:]]" nil t count)
-    (if (match-beginning 1)
-        (cons (match-beginning 1) (match-end 1))
-      (cons (match-beginning 0) (match-end 0)))))
+  (when markdown-enable-math
+    (when (re-search-forward "\\\\(\\|[ \t\n]\\(\\$\\)[^ $\t[:digit:]]" nil t count)
+      (if (match-beginning 1)
+          (cons (match-beginning 1) (match-end 1))
+        (cons (match-beginning 0) (match-end 0))))))
 
 (defun poly-markdown-inline-math-tail-matcher (_count)
-  (if (match-beginning 1)
-      ;; head matched an $..$ block
-      (when (re-search-forward "[^ $\\\t]\\(\\$\\)[^$[:alnum:]]" nil t)
-        (cons (match-beginning 1) (match-end 1)))
-    ;; head matched an \(..\) block
-    (when (re-search-forward "\\\\)" nil t)
-      (cons (match-beginning 0) (match-end 0)))))
+  (when markdown-enable-math
+    (if (match-beginning 1)
+        ;; head matched an $..$ block
+        (when (re-search-forward "[^ $\\\t]\\(\\$\\)[^$[:alnum:]]" nil t)
+          (cons (match-beginning 1) (match-end 1)))
+      ;; head matched an \(..\) block
+      (when (re-search-forward "\\\\)" nil t)
+        (cons (match-beginning 0) (match-end 0))))))
 
 (define-innermode poly-markdown-inline-math-innermode poly-markdown-root-innermode
   "Inline math $..$ block.
