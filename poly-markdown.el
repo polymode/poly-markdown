@@ -3,8 +3,8 @@
 ;; Author: Vitalie Spinu
 ;; Maintainer: Vitalie Spinu
 ;; Copyright (C) 2018
-;; Version: 0.2
-;; Package-Requires: ((emacs "25") (polymode "0.2") (markdown-mode "2.3"))
+;; Version: 0.2.1
+;; Package-Requires: ((emacs "25") (polymode "0.2.1") (markdown-mode "2.3"))
 ;; URL: https://github.com/polymode/poly-markdown
 ;; Keywords: emacs
 ;;
