@@ -481,3 +481,6 @@ python-here
       (should (equal bname (buffer-name)))
       (kill-buffer)
       (should (buffer-live-p cbuff)))))
+
+(ert-deftest infra/poly-markdown/pm-map-over-modes ()
+  (pm-test-map-over-modes poly-markdown-mode "markdown.md"))
