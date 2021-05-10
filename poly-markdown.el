@@ -35,6 +35,7 @@
 ;;
 ;;; Code:
 
+(eval-when-compile (require 'desktop)) ;; in define-polymode poly-markdown-mode
 (require 'polymode)
 (require 'markdown-mode)
 
