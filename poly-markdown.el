@@ -64,10 +64,11 @@
   :head-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-begin :inc-end)
   :tail-matcher (pm-make-text-property-matcher 'markdown-yaml-metadata-end))
 
+;; allow extra . before language name https://github.com/polymode/polymode/issues/296
 (define-auto-innermode poly-markdown-fenced-code-innermode poly-markdown-root-innermode
-  :head-matcher (cons "^[ \t]*\\(```[ \t]*{?[[:alpha:]].*\n\\)" 1)
+  :head-matcher (cons "^[ \t]*\\(```[ \t]*{?[[:alpha:].].*\n\\)" 1)
   :tail-matcher (cons "^[ \t]*\\(```\\)[ \t]*$" 1)
-  :mode-matcher (cons "```[ \t]*{?\\(?:lang *= *\\)?\\([^ \t\n;=,}]+\\)" 1))
+  :mode-matcher (cons "```[ \t]*{?\\.?\\(?:lang *= *\\)?\\([^ \t\n;=,}]+\\)" 1))
 
 ;; Intended to be inherited from by more specialized innermodes.
 ;; FIXME: Some font-lock issues on deletion.
