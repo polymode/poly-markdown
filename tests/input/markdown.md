@@ -44,12 +44,27 @@ Ordered lists
 44. And a forty-fourth element.
 3. Remember, Markdown doesn't care which number you use.
 
-```ada
-with Ada.Text_IO; use Ada.Text_IO;
-procedure Hello is
-begin
-   Put_Line ("Hello, world!");
-end Hello;
+```perl
+# Scan a file and print all the URL's it links to.
+sub scan {
+    my ($fn) = @_;
+
+    open(IN, $fn) or return 0;
+
+    # Go through each line in the file.
+    while(<IN>) {
+        # Repeatedly match URLs in the line.  Each one is removed by
+        # replacing it with the empty string.  The loop body will execute
+        # once for each match/replace, and prints the URL part of the
+        # matched text.
+        while(s/<\s*A\s+[^>]*HREF\s*\=\s*"([^"]+)"//i) {
+            print "   $1\n";
+        }
+    }
+
+    close IN;
+    return 1;
+}
 ```
 List items with bold and italic
 
