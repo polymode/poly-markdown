@@ -48,9 +48,9 @@ Ordered lists
 # Scan a file and print all the URL's it links to.
 sub scan {
     my ($fn) = @_;
-
+    
     open(IN, $fn) or return 0;
-
+    
     # Go through each line in the file.
     while(<IN>) {
         # Repeatedly match URLs in the line.  Each one is removed by
@@ -61,7 +61,7 @@ sub scan {
             print "   $1\n";
         }
     }
-
+    
     close IN;
     return 1;
 }
