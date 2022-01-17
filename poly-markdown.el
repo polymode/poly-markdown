@@ -36,6 +36,7 @@
 ;;; Code:
 
 (require 'polymode)
+(require 'poly-lock)
 (require 'markdown-mode)
 
 ;; Declarations

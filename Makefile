@@ -2,7 +2,7 @@ MODULE = poly-markdown
 export EMACS ?= emacs
 EMACS_VERSION = $(shell ${EMACS} -Q --batch --eval "(princ emacs-version)")
 ELPA_DIR := .ELPA/$(EMACS_VERSION)
-EMACSRUN = $(EMACS) -Q -L . -L modes -L tests -L $(ELPA_DIR)
+EMACSRUN = $(EMACS) -Q --debug-init -L . -L modes -L tests -L $(ELPA_DIR)
 EMACSBATCH = $(EMACSRUN) --batch
 
 ELS = $(wildcard *.el)
@@ -38,18 +38,19 @@ melpa: version
 elpa: melpa
 
 start: version melpa
-	$(EMACSRUN) -L . \
-		--load targets/melpa-init.el \
-		--load tests/*.el
+	$(EMACSRUN) -L . --load targets/melpa-init.el --load tests/*.el
 
 startvs: version
-	$(EMACSRUN) -L . \
-		--load targets/local.el \
+	$(EMACSRUN) -L . --load targets/local.el \
 		--load tests/*.el --load ~/.eBasic.el
 
 test: build version
 	@echo "******************* Testing $(MODULE) ***************************"
 	$(EMACSBATCH) --load targets/melpa-init.el --load targets/test.el
+
+test-local: version
+	@echo "******************* Testing $(MODULE) ***************************"
+	$(EMACSBATCH) --load targets/local.el --load targets/test.el
 
 version:
 	@echo "EMACS VERSION: $(EMACS_VERSION)"
