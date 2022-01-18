@@ -121,7 +121,7 @@
 
 (ert-deftest poly-markdown/fenced-code ()
   (poly-markdown-tests-set-protected nil)
-  (pm-test-poly-lock poly-markdown-mode "tmp.md"
+  (pm-test-poly-lock poly-markdown-mode "markdown.md"
     ((delete-fence (38))
      ;; (switch-to-buffer (current-buffer))
      (delete-forward-char 1)
@@ -131,19 +131,18 @@
     ((delete-fortran-print (23))
      (forward-word)
      (delete-backward-char 1))
-    ((insert-ada-hello (51))
+    ((insert-perl-hello (51))
      (insert "\"hello!\"\n")
      (indent-for-tab-command))
     ((insert-lisp-arg "&rest forms")
      (backward-sexp 2)
      (insert "first-arg "))
-    ((python-kill-line (130))
+    ((python-kill-line (145))
      (kill-line 3))
     ((elisp-kill-sexp ("(while (setq retail" beg))
      (kill-sexp))
     ((elisp-kill-defun ("(defun delete-dups" beg))
-     (kill-sexp))
-    ))
+     (kill-sexp))))
 
 (ert-deftest poly-markdown/fenced-code-protected ()
   (poly-markdown-tests-set-protected t)
