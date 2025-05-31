@@ -104,7 +104,8 @@
   "Displayed math $$..$$ innermode.
 Tail must be flowed by a new line but head need not (a space or
 comment character would do)."
-  :mode 'latex-mode
+  :mode 'LaTeX-mode  ; AucTeX mode by default
+  :fallback-mode 'latex-mode
   :head-matcher #'poly-markdown-displayed-math-head-matcher
   :tail-matcher #'poly-markdown-displayed-math-tail-matcher
   :allow-nested nil)
@@ -132,7 +133,8 @@ First $ must be preceded by a white-space character and followed
 by a non-whitespace/digit character. The closing $ must be
 preceded by a non-whitespace and not followed by an alphanumeric
 character."
-  :mode 'latex-mode
+  :mode 'LaTeX-mode
+  :fallback-mode 'latex-mode
   :head-matcher #'poly-markdown-inline-math-head-matcher
   :tail-matcher #'poly-markdown-inline-math-tail-matcher
   :allow-nested nil)
