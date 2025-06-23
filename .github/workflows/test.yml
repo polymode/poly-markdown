@@ -48,6 +48,12 @@ jobs:
       with:
         version: 'snapshot'
 
+    - name: Build
+      run: |
+        eask package
+        eask install
+        eask compile
+
     - name: Run tests
       run: |
         eask install-deps --dev
