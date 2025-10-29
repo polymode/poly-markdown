@@ -50,6 +50,17 @@
 (define-obsolete-variable-alias 'pm-inner/markdown-inline-math 'poly-markdown-inline-math-innermode "v0.2")
 (define-obsolete-variable-alias 'pm-poly/markdown 'poly-markdown-polymode "v0.2")
 
+(defgroup poly-markdown nil
+  "Settings for ‘poly-markdown’."
+  :group 'polymode)
+
+(defcustom poly-markdown-enable-latex-math t
+  "When non-nil, enable LaTeX-related innermodes in poly-markdown:
+- inline/display math regions ($...$, $$...$$, \\(...\\), \\[...\\])
+- fenced code blocks with language \"latex\" or \"tex\"."
+  :type 'boolean
+  :group 'poly-markdown)
+
 (define-hostmode poly-markdown-hostmode
   :mode 'markdown-mode
   :init-functions '(poly-markdown-remove-markdown-hooks))
@@ -142,11 +153,12 @@ character."
 ;;;###autoload  (autoload 'poly-markdown-mode "poly-markdown")
 (define-polymode poly-markdown-mode
   :hostmode 'poly-markdown-hostmode
-  :innermodes '(poly-markdown-fenced-code-innermode
-                ;; poly-markdown-inline-code-innermode
-                poly-markdown-displayed-math-innermode
-                poly-markdown-inline-math-innermode
-                poly-markdown-yaml-metadata-innermode))
+  :innermodes (append
+             '(poly-markdown-fenced-code-innermode
+               poly-markdown-yaml-metadata-innermode)
+             (when poly-markdown-enable-latex-math
+               '(poly-markdown-inline-math-innermode
+                 poly-markdown-displayed-math-innermode))))
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.md\\'" . poly-markdown-mode))
